@@ -5,39 +5,615 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>LoovisOS — Phone made for kids</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 700px; margin: 2rem auto; padding: 0 1rem; line-height: 1.6; color: #333; }
-    header { text-align: center; margin-bottom: 2rem; }
-    a { color: #007acc; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    h1 { font-weight: 700; }
-    section { margin-bottom: 2rem; }
-    footer { text-align: center; font-size: 0.9rem; color: #666; margin-top: 4rem; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-color: #4f46e5;
+      --primary-dark: #3730a3;
+      --secondary-color: #06b6d4;
+      --accent-color: #f59e0b;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --text-light: #9ca3af;
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8fafc;
+      --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* Animated background */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      opacity: 0.03;
+    }
+
+    .bg-animation::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" patternUnits="userSpaceOnUse" width="100" height="100"><circle cx="50" cy="50" r="1" fill="%23667eea" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+      animation: float 20s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+
+    /* Header */
+    header {
+      position: relative;
+      padding: 4rem 0 6rem;
+      background: var(--bg-gradient);
+      color: white;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100"><polygon fill="%23ffffff" fill-opacity="0.1" points="0,100 100,0 200,100 300,0 400,100 500,0 600,100 700,0 800,100 900,0 1000,100"/></svg>');
+      animation: wave 15s ease-in-out infinite;
+    }
+
+    @keyframes wave {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(-100px); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      animation: fadeInUp 1s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: linear-gradient(45deg, #fff, #e2e8f0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1.1rem, 2vw, 1.5rem);
+      margin-bottom: 2rem;
+      opacity: 0.9;
+      font-weight: 300;
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 1rem 2rem;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255,255,255,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .cta-button:hover::before {
+      left: 100%;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      background: rgba(255,255,255,0.3);
+    }
+
+    /* Main content */
+    main {
+      padding: 6rem 0;
+    }
+
+    .section {
+      margin-bottom: 6rem;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s ease;
+    }
+
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--primary-color);
+      position: relative;
+      display: inline-block;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      border-radius: 2px;
+    }
+
+    .section-content {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+
+    /* Feature cards */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .feature-card {
+      background: var(--bg-primary);
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: var(--shadow-lg);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0,0,0,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      font-size: 24px;
+      color: white;
+    }
+
+    .feature-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .feature-description {
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Social links */
+    .social-links {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+
+    .social-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.5rem;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      text-decoration: none;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      border: 2px solid transparent;
+    }
+
+    .social-link:hover {
+      background: var(--primary-color);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Footer */
+    footer {
+      background: var(--text-primary);
+      color: white;
+      text-align: center;
+      padding: 3rem 0;
+      margin-top: 6rem;
+      position: relative;
+    }
+
+    footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    }
+
+    .footer-content {
+      opacity: 0.8;
+      font-size: 0.9rem;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 1rem;
+      }
+
+      header {
+        padding: 3rem 0 4rem;
+      }
+
+      main {
+        padding: 4rem 0;
+      }
+
+      .section {
+        margin-bottom: 4rem;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .social-links {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    /* Scroll indicator */
+    .scroll-indicator {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      z-index: 1000;
+      transition: width 0.3s ease;
+    }
+
+    /* Loading animation */
+    .loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+
+    .loading.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loader {
+      width: 50px;
+      height: 50px;
+      border: 3px solid var(--bg-secondary);
+      border-top: 3px solid var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
+  <div class="loading" id="loading">
+    <div class="loader"></div>
+  </div>
+
+  <div class="scroll-indicator" id="scrollIndicator"></div>
+  <div class="bg-animation"></div>
+
   <header>
-    <h1>LoovisOS</h1>
-    <p>The phone made for kids. Peace of mind for parents.</p>
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title">LoovisOS</h1>
+        <p class="hero-subtitle">The phone made for kids. Peace of mind for parents.</p>
+        <a href="#about" class="cta-button">Discover More</a>
+      </div>
+    </div>
   </header>
 
-  <section>
-    <h2>About LoovisOS</h2>
-    <p>LoovisOS is an independent, open-source operating system designed specifically for kids. It aims to provide a safe, ethical, and parent-approved phone experience built from the ground up.</p>
-  </section>
+  <main>
+    <div class="container">
+      <section class="section" id="about">
+        <h2 class="section-title">About LoovisOS</h2>
+        <div class="section-content">
+          <p>LoovisOS is an independent, open-source operating system designed specifically for kids. Built from the ground up with safety, ethics, and parental peace of mind at its core, our technology creates a secure digital environment where children can learn, play, and communicate safely.</p>
+        </div>
+        
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h3 class="feature-title">Built-in Safety</h3>
+            <p class="feature-description">Advanced parental controls and content filtering ensure your child's digital experience is always appropriate and secure.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">🌐</div>
+            <h3 class="feature-title">Open Source</h3>
+            <p class="feature-description">Transparent, community-driven development means no hidden features or data collection you don't know about.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">🎓</div>
+            <h3 class="feature-title">Educational Focus</h3>
+            <p class="feature-description">Designed to promote learning and creativity while limiting distractions and inappropriate content.</p>
+          </div>
+        </div>
+      </section>
 
-  <section>
-    <h2>Get Involved</h2>
-    <p>We’re looking for developers, parents, designers, and educators to join us in building this community-driven project.</p>
-    <p>Visit the <a href="https://github.com/MorganFlam/loovis-os" target="_blank" rel="noopener noreferrer">GitHub repository</a> to learn more and contribute.</p>
-  </section>
+      <section class="section" id="involved">
+        <h2 class="section-title">Get Involved</h2>
+        <div class="section-content">
+          <p>We're building something extraordinary together. Join our community of developers, parents, designers, and educators who are passionate about creating safe technology for children. Your expertise and perspective can help shape the future of kids' digital experiences.</p>
+          <p>Whether you're a parent with insights about what kids need, a developer who wants to contribute code, or an educator with ideas about digital learning, there's a place for you in our community.</p>
+        </div>
+        
+        <div class="social-links">
+          <a href="https://github.com/MorganFlam/loovis-os" class="social-link" target="_blank" rel="noopener noreferrer">
+            <span>💻</span> GitHub
+          </a>
+        </div>
+      </section>
 
-  <section>
-    <h2>Contact & Social</h2>
-    <p>Follow us on <a href="https://twitter.com/anxious_afk" target="_blank" rel="noopener noreferrer">Twitter</a> and <a href="https://instagram.com/anxious_afk" target="_blank" rel="noopener noreferrer">Instagram</a>.</p>
-  </section>
+      <section class="section" id="contact">
+        <h2 class="section-title">Stay Connected</h2>
+        <div class="section-content">
+          <p>Follow our journey and stay updated on the latest developments. Join our growing community of parents and tech enthusiasts who are passionate about safe technology for children.</p>
+        </div>
+        
+        <div class="social-links">
+          <a href="https://twitter.com/anxious_afk" class="social-link" target="_blank" rel="noopener noreferrer">
+            <span>🐦</span> Twitter
+          </a>
+          <a href="https://instagram.com/anxious_afk" class="social-link" target="_blank" rel="noopener noreferrer">
+            <span>📸</span> Instagram
+          </a>
+        </div>
+      </section>
+    </div>
+  </main>
 
   <footer>
-    <p>© 2025 Loovis Project. Licensed under CC BY-NC 4.0.</p>
+    <div class="container">
+      <div class="footer-content">
+        <p>© 2025 Loovis Project. Licensed under CC BY-NC 4.0.</p>
+        <p>Building safer technology for the next generation.</p>
+      </div>
+    </div>
   </footer>
+
+  <script>
+    // Loading animation
+    window.addEventListener('load', function() {
+      const loading = document.getElementById('loading');
+      setTimeout(() => {
+        loading.classList.add('hidden');
+      }, 1000);
+    });
+
+    // Scroll indicator
+    window.addEventListener('scroll', function() {
+      const scrollIndicator = document.getElementById('scrollIndicator');
+      const scrolled = (window.pageYOffset / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+      scrollIndicator.style.width = scrolled + '%';
+    });
+
+    // Intersection Observer for animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    // Observe all sections
+    document.querySelectorAll('.section').forEach(section => {
+      observer.observe(section);
+    });
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Feature cards hover effects
+    document.querySelectorAll('.feature-card').forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-10px) scale(1.02)';
+      });
+      
+      card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+      });
+    });
+
+    // Parallax effect for background
+    window.addEventListener('scroll', function() {
+      const scrolled = window.pageYOffset;
+      const rate = scrolled * -0.5;
+      const bgAnimation = document.querySelector('.bg-animation');
+      if (bgAnimation) {
+        bgAnimation.style.transform = `translate3d(0, ${rate}px, 0)`;
+      }
+    });
+
+    // Add some interactive sparkle effects
+    function createSparkle() {
+      const sparkle = document.createElement('div');
+      sparkle.style.position = 'fixed';
+      sparkle.style.width = '4px';
+      sparkle.style.height = '4px';
+      sparkle.style.background = 'linear-gradient(45deg, #4f46e5, #06b6d4)';
+      sparkle.style.borderRadius = '50%';
+      sparkle.style.pointerEvents = 'none';
+      sparkle.style.zIndex = '1000';
+      sparkle.style.left = Math.random() * window.innerWidth + 'px';
+      sparkle.style.top = Math.random() * window.innerHeight + 'px';
+      sparkle.style.animation = 'sparkle 2s ease-out forwards';
+      
+      document.body.appendChild(sparkle);
+      
+      setTimeout(() => {
+        sparkle.remove();
+      }, 2000);
+    }
+
+    // Add sparkle animation CSS
+    const sparkleStyle = document.createElement('style');
+    sparkleStyle.textContent = `
+      @keyframes sparkle {
+        0% {
+          opacity: 0;
+          transform: scale(0);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(0);
+        }
+      }
+    `;
+    document.head.appendChild(sparkleStyle);
+
+    // Create sparkles periodically
+    setInterval(createSparkle, 3000);
+
+    // Enhanced mouse tracking for hero section
+    const hero = document.querySelector('header');
+    if (hero) {
+      hero.addEventListener('mousemove', function(e) {
+        const rect = hero.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const moveX = (x - rect.width / 2) * 0.01;
+        const moveY = (y - rect.height / 2) * 0.01;
+        
+        hero.style.backgroundPosition = `${50 + moveX}% ${50 + moveY}%`;
+      });
+    }
+  </script>
 </body>
 </html>
